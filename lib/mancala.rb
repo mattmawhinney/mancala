@@ -1,37 +1,3 @@
-#SETUP
-#2 players
-#start with an even distribution of stones 
-#4 stones in each of 12 "non-end-zone" slots on the game board
-# 48 total stones 
-# Each player a side of the board
-# and an end-zone (to the right of their side from the player's persp.)
-#where they deposit their stones 
-
-#MOVING  & SCORING 
-#play starts with the player on the bottom side of the board
-#picking the stones from anyone of his/her 6 slots
-#then, moving counter-clockwise
-#the player deposits the stones 1 at a time
-#into the sucessive slots 
-
-#if the players depositing includes their own endzone
-  #they deposit the stone in their endzone 
-#if the depositing includes the other players endzone 
-  #they skip it and move on to the next slot(which is their own)
-
-#if the last piece a player deposits is in their own endzone 
-  #they get a free turn 
-#if the last piece they deposit is in an empty slot on their side
-	#they get all the pieces opposite that slot in their endzone 
-
-#barring a free turn, play alternates after every move 
-# use 
-
-#WINNING
-# Play stops when all the stones are cleared from one side of the board
-# The player with the greatest number of stones in his/her endzone at this 
-# point is the winner 
-
 require '../test/test_mancala.rb'
 require './modules.rb'
 include MancalaTests
@@ -39,107 +5,41 @@ include DrawBoard
 
 class Mancala 
  
- #accesor for testing purposes 
  attr_accessor :player1, :player2, :slot, :board, :last_deposit_tracker
 
- #attr_reader   :player1, :player2, :slot, :board
-  
  def initialize
    @player1 = true 
    @player2 = false 
    @board = [[],["o","o","o","o"],["o","o","o","o"],["o","o","o","o"],["o","o","o","o"],["o","o","o","o"],["o","o","o","o"],
             [],["o","o","o","o"],["o","o","o","o"],["o","o","o","o"],["o","o","o","o"],["o","o","o","o"],["o","o","o","o"]]
 
-  #used in the extra_turn and collect_pebbles methods 
-  @last_deposit_tracker = []
-
-   #this @board to be used only with test_skip_endzone
-   # @board = [[],[1,1,1,1],[1,1,1,1],[1,1,1,1],[1,1,1,1],[1,1,1,1],[1,1,1,1,1,1,1,1],
-   #           [],[1,1,1,1],[1,1,1,1],[1,1,1,1],[1,1,1,1],[1,1,1,1],[1,1,1,1,1,1,1,1]]
-   #play
-   #my suspicion is that play 
-   #will eventually have to be in 
-   #initialize to set the game in motion 
+   #used in the extra_turn and collect_pebbles methods 
+   @last_deposit_tracker ||= [1]
+   play
  end 
 
 
  ##########game play########
 
-
   def play
     draw_board 
     until game_over  
-       
+      draw_board
       get_move
       move
       collect_pebbles
-      sleep(0.5)
       draw_board
-      turn_switch unless extra_turn
+      sleep(3.5)
+      turn_switch unless extra_turn 
     end  
 
     win 
   end 
 
 
-##########draw board#########
-  def draw_board
-    puts "\e[H\e[2J\n"  
-
-    slot_0 = @board[0].join("")
-    slot_1 = @board[1].join("")
-    slot_2 = @board[2].join("")
-    slot_3 = @board[3].join("")
-    slot_4 = @board[4].join("")
-    slot_5 = @board[5].join("")
-    slot_6 = @board[6].join("")
-    slot_7 = @board[7].join("")
-    slot_8 = @board[8].join("")
-    slot_9 = @board[9].join("")
-    slot_10 = @board[10].join("")
-    slot_11 = @board[11].join("")
-    slot_12 = @board[12].join("")
-    slot_13 = @board[13].join("")
-    
-
-
-puts <<-DRAWBOARD
-                                        MATT'S MANCALA
-            Instructions: http://boardgames.about.com/cs/mancala/ht/play_mancala.htm
-
-
-P2 Slots 13-8
-
-\s\s13(#{slot_13}     )\s\s\s12(#{slot_12}      )\s\s\s11(#{slot_11}     )\s\s\s10(#{slot_10}      )\s\s\s9(#{slot_9}      )\s\s\s8(#{slot_8}      )
-
-
-
-\t\tP2Goal(#{slot_0}           )\t\t\t\t(#{slot_7}            )P1Goal
-
-
-
-\s\s1(#{slot_1}      )\s\s\s\s2(#{slot_2}      )\s\s\s\s3(#{slot_3}      )\s\s\s4(#{slot_4}      )\s\s\s5(#{slot_5}      )\s\s\s6(#{slot_6}      )  
-
-P1 Slots 1-6
-
-DRAWBOARD
-
-
-
-end 
-
-
-
-
  #########board logic########
  
- def board_show
-
-  p @board 
-
- end 
-  
- #almost working, have to write skip opposite player's endzone
+ #working
  def move   
   @slot = slot 
   #pick the array at the chosen slot number 
@@ -183,8 +83,8 @@ end
   
   #empty the orignally chosen slot 
   @board[@slot] = []
-  draw_board
-  sleep(0.5)
+  
+  
 
   @board 
 
@@ -206,10 +106,8 @@ end
 
  #working
  def collect_pebbles
-   #if player1 makes a deposit on his own side
-   if @player1 && (last_deposit >= 1 && last_deposit <= 6)
-     #if the last slot deposited in was empty before the deposit 
-     if @board[last_deposit] == ["o"]
+   #if player1 makes a deposit on his own side and if the last slot deposited in was empty before the deposit 
+   if @player1 && (last_deposit >= 1 && last_deposit <= 6) && (@board[last_deposit] == ["o"])
       #add the stones from the adjacent slot on player2's side 
       #to player1's endzone
       #this takes advantage of using negative indexing to identify
@@ -217,17 +115,18 @@ end
       @board[7] += @board[-1 * last_deposit]
       #and clear out the adjacent slot on player2's side
       @board[-1 * last_deposit] = []
-     end
-    elsif @player2 && (last_deposit >= 8 && last_deposit <= 13)
-     if @board[last_deposit] == ["o"]
+      return true
+    elsif @player2 && (last_deposit >= 8 && last_deposit <= 13) && (@board[last_deposit] == ["o"])
       #for player2, need to subtract 14 from last_deposit 
       #to get it into negative index format
       #and then take the opposite for the adjacent spot 
       #on player1's side of the board 
       @board[0] += @board[-1 * (last_deposit - 14)]
       @board[-1 * (last_deposit - 14)] = []
-     end
-   end
+      return true
+    else
+      return false
+    end 
  end 
 
   def game_over
@@ -238,7 +137,6 @@ end
 
 
   end 
-
 
  def win 
   if @board[7].length > @board[0].length 
@@ -252,10 +150,6 @@ end
     puts "It's a draw!"
   end 
  end 
-
-
-
-
  
  #working 
  def turn_switch
@@ -270,7 +164,7 @@ end
  def get_move 
   puts
   #output 'slot choice message' based on player turn 
-  puts "Choose a non-empty slot from #{@player1 ? '1-6' : '8-13'}"
+  puts "Player #{@player1 ? '1' : '2'}, choose a non-empty slot from #{@player1 ? '1-6' : '8-13'}"
   prompt
   @slot = gets.chomp.to_i 
   if move_valid? 
@@ -405,8 +299,8 @@ end
 #test_collect_pebbles
 #test_game_over
 #test_win
-my_mancala = Mancala.new
-my_mancala.play
+Mancala.new
+
 
 
 

@@ -1,0 +1,33 @@
+SETUP
+2 players
+start with an even distribution of stones 
+4 stones in each of 12 "non-end-zone" slots on the game board
+48 total stones 
+Each player a side of the board
+and an end-zone (to the right of their side from the player's persp.)
+where they deposit their stones 
+
+MOVING  & SCORING 
+play starts with the player on the bottom side of the board
+picking the stones from anyone of his/her 6 slots
+then, moving counter-clockwise
+the player deposits the stones 1 at a time
+into the sucessive slots 
+
+if the players depositing includes their own endzone
+  they deposit the stone in their endzone 
+if the depositing includes the other players endzone 
+  they skip it and move on to the next slot(which is their own)
+
+if the last piece a player deposits is in their own endzone 
+  they get a free turn 
+if the last piece they deposit is in an empty slot on their side
+	they get all the pieces opposite that slot in their endzone 
+
+barring a free turn, play alternates after every move 
+use 
+
+WINNING
+Play stops when all the stones are cleared from one side of the board
+The player with the greatest number of stones in his/her endzone at this 
+point is the winner 

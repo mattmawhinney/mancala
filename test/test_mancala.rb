@@ -53,6 +53,13 @@ module MancalaTests
     #for this test make sure your @board array has two empty endzones
     #and 8 pebbles in slots 6 and 13 
     #also make sure attr_accesor :board is selected above initialze
+    #this @board to be used only with test_skip_endzone
+   # @board = [[],["o","o","o","o"],["o","o","o","o"],["o","o","o","o"],["o","o","o","o"],["o","o","o","o"],["o","o","o","o","o","o","o","o"],
+   #           [],["o","o","o","o"],["o","o","o","o"],["o","o","o","o"],["o","o","o","o"],["o","o","o","o"],["o","o","o","o","o","o","o","o"]]
+   
+
+
+
     my_mancala = Mancala.new
     show_board = my_mancala.board 
     puts 

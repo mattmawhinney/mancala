@@ -32,8 +32,10 @@
 # The player with the greatest number of stones in his/her endzone at this 
 # point is the winner 
 
-require './test/test_mancala.rb'
+require '../test/test_mancala.rb'
+require './modules.rb'
 include MancalaTests
+include DrawBoard
 
 class Mancala 
  
@@ -45,11 +47,12 @@ class Mancala
  def initialize
    @player1 = true 
    @player2 = false 
-   @board = [[],[1,1,1,1],[1,1,1,1],[1,1,1,1],[1,1,1,1],[1,1,1,1],[1,1,1,1],
-            [],[1,1,1,1],[1,1,1,1],[1,1,1,1],[1,1,1,1],[1,1,1,1],[1,1,1,1]]
+   @board = [[],["o","o","o","o"],["o","o","o","o"],["o","o","o","o"],["o","o","o","o"],["o","o","o","o"],["o","o","o","o"],
+            [],["o","o","o","o"],["o","o","o","o"],["o","o","o","o"],["o","o","o","o"],["o","o","o","o"],["o","o","o","o"]]
 
   #used in the extra_turn and collect_pebbles methods 
   @last_deposit_tracker = []
+
    #this @board to be used only with test_skip_endzone
    # @board = [[],[1,1,1,1],[1,1,1,1],[1,1,1,1],[1,1,1,1],[1,1,1,1],[1,1,1,1,1,1,1,1],
    #           [],[1,1,1,1],[1,1,1,1],[1,1,1,1],[1,1,1,1],[1,1,1,1],[1,1,1,1,1,1,1,1]]
@@ -64,18 +67,69 @@ class Mancala
 
 
   def play
-    until game_over    
+    draw_board 
+    until game_over  
+       
       get_move
       move
       collect_pebbles
-      puts
-      board_show
-      puts
+      sleep(0.5)
+      draw_board
       turn_switch unless extra_turn
     end  
 
     win 
   end 
+
+
+##########draw board#########
+  def draw_board
+    puts "\e[H\e[2J\n"  
+
+    slot_0 = @board[0].join("")
+    slot_1 = @board[1].join("")
+    slot_2 = @board[2].join("")
+    slot_3 = @board[3].join("")
+    slot_4 = @board[4].join("")
+    slot_5 = @board[5].join("")
+    slot_6 = @board[6].join("")
+    slot_7 = @board[7].join("")
+    slot_8 = @board[8].join("")
+    slot_9 = @board[9].join("")
+    slot_10 = @board[10].join("")
+    slot_11 = @board[11].join("")
+    slot_12 = @board[12].join("")
+    slot_13 = @board[13].join("")
+    
+
+
+puts <<-DRAWBOARD
+                                        MATT'S MANCALA
+            Instructions: http://boardgames.about.com/cs/mancala/ht/play_mancala.htm
+
+
+P2 Slots 13-8
+
+\s\s13(#{slot_13}     )\s\s\s12(#{slot_12}      )\s\s\s11(#{slot_11}     )\s\s\s10(#{slot_10}      )\s\s\s9(#{slot_9}      )\s\s\s8(#{slot_8}      )
+
+
+
+\t\tP2Goal(#{slot_0}           )\t\t\t\t(#{slot_7}            )P1Goal
+
+
+
+\s\s1(#{slot_1}      )\s\s\s\s2(#{slot_2}      )\s\s\s\s3(#{slot_3}      )\s\s\s4(#{slot_4}      )\s\s\s5(#{slot_5}      )\s\s\s6(#{slot_6}      )  
+
+P1 Slots 1-6
+
+DRAWBOARD
+
+
+
+end 
+
+
+
 
  #########board logic########
  
@@ -118,6 +172,8 @@ class Mancala
     end
     #deposit the first pebble into the board slot one position ahead 
     @board[count + 1] << pebble 
+    draw_board
+    sleep(0.5)
     #increment counter by one so the next pebble is put two positions ahead
     count += 1 
     
@@ -125,9 +181,13 @@ class Mancala
 
   @last_deposit_tracker << count 
   
-  #empty the orignally chose slot 
+  #empty the orignally chosen slot 
   @board[@slot] = []
+  draw_board
+  sleep(0.5)
+
   @board 
+
     
  end 
 
@@ -149,7 +209,7 @@ class Mancala
    #if player1 makes a deposit on his own side
    if @player1 && (last_deposit >= 1 && last_deposit <= 6)
      #if the last slot deposited in was empty before the deposit 
-     if @board[last_deposit] == [1]
+     if @board[last_deposit] == ["o"]
       #add the stones from the adjacent slot on player2's side 
       #to player1's endzone
       #this takes advantage of using negative indexing to identify
@@ -159,7 +219,7 @@ class Mancala
       @board[-1 * last_deposit] = []
      end
     elsif @player2 && (last_deposit >= 8 && last_deposit <= 13)
-     if @board[last_deposit] == [1]
+     if @board[last_deposit] == ["o"]
       #for player2, need to subtract 14 from last_deposit 
       #to get it into negative index format
       #and then take the opposite for the adjacent spot 
@@ -326,8 +386,8 @@ class Mancala
  
 ###############loose ends#########
   #text file for instructions 
-  #win method
-  #board draw method/methods 
+  #more in game direction 
+  #breaking out files into moduels
   #
 
  ############################

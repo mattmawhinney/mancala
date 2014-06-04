@@ -1,6 +1,31 @@
-# require '../test/test_mancala.rb'
+
+  # def gets_from(array_of_values, prompt)
+  #   puts prompt
+  #   input = gets.chomp.gsub(/[^a-z]/i, '').downcase.to_sym
+  #   return input if array_of_values.include? input
+  #   puts "Didn't catch that.  Try again.\n"
+  #   gets_from(array_of_values, prompt)
+  # end
+
+
+
+
+  # def gets_from_range(min, max, options = {})
+  #   error = nil
+  #   loop do
+  #     puts error if error
+  #     puts options[:prompt] if options[:prompt]
+  #     input = gets.chomp.to_i
+  #     return input if (min..max) === input
+  #     error = "Must be between #{min} and #{max}. Try again."
+  #   end
+  # end
+
+
+
+require '../test/test_mancala.rb'
 require './modules.rb'
-# include MancalaTests
+include MancalaTests
 include DrawBoard
 
 class Mancala 
@@ -8,9 +33,8 @@ class Mancala
  attr_accessor :player1, :player2, :slot, :board, :last_deposit_tracker
 
  def initialize
-   @player1 = true 
-   @player2 = false 
-   @board = [[],["o","o","o","o"],["o","o","o","o"],["o","o","o","o"],["o","o","o","o"],["o","o","o","o"],["o","o","o","o"],
+  @player = 1
+   @board = [[],4,4,4,["o","o","o","o"],["o","o","o","o"],["o","o","o","o"],
             [],["o","o","o","o"],["o","o","o","o"],["o","o","o","o"],["o","o","o","o"],["o","o","o","o"],["o","o","o","o"]]
 
    #used in the extra_turn and collect_pebbles methods 
@@ -23,16 +47,22 @@ class Mancala
 
   def play
     draw_board 
-    until game_over  
-      draw_board
-      get_move
-      move
-      collect_pebbles
-      draw_board
-      sleep(3.5)
-      turn_switch unless extra_turn 
-    end  
-
+    # until game_over  
+    #   draw_board
+    #   get_move
+    #   move
+    #   collect_pebbles
+    #   draw_board
+    #   sleep(3.5)
+    #   turn_switch unless extra_turn 
+    # end  
+    turn_tracker = []
+    turn_count = 0
+    until game_over
+      turn = turn_count.even? ? 1 : 0
+      turn_tracker << Turn.new(turn)
+      turn_count += 1
+    end
     win 
   end 
 
@@ -95,13 +125,7 @@ class Mancala
  def extra_turn
     #method that gives extra turn to player
     #if they deposit their last stone in their own endzone 
-  if @player1 && last_deposit == 7
-    return true 
-  elsif @player2 && last_deposit == 0
-    return true
-  else
-    return false
-  end 
+  @player1 && last_deposit == 7 || @player2 && last_deposit == 0
  end 
 
  #working
@@ -131,11 +155,7 @@ class Mancala
 
   def game_over
 
-    if @board[1..6].flatten.empty? || @board[8..13].flatten.empty?
-      return true 
-    end 
-
-
+    @board[1..6].flatten.empty? || @board[8..13].flatten.empty?
   end 
 
  def win 
@@ -160,6 +180,8 @@ class Mancala
 
  ########gets methods########
  
+
+
  #working 
  def get_move 
   puts
@@ -182,7 +204,7 @@ class Mancala
   #are there pebbles in the chosen slot? 
   if @board[@slot].length != 0 
     #is player 1 choosing slots 1-6?
-    if @player1 && (@slot >= 1 && @slot <= 6) 
+    if @player == 0 && (@slot >= 1 && @slot <= 6) 
       return true 
     #is player2 choosing slots 8-12?
     elsif @player2 && (@slot >= 8 && @slot <= 13) 

@@ -1,7 +1,10 @@
 Mancala is a game of moving stones or pebbles around a playing board. It traces its roots
 back as far as 1300 years to the regions of modern day Ethiopia and Eritrea. 
 
-And, I used to play it when growing up. Here are the rules:
+Also, I used to play it while growing up, and you can play it too by cloning this repo and running the mancala.rb in the lib folder. 
+
+
+Here are the rules:
 
 
 1. The Mancala 'board' is made up of two rows of six holes, or slots, each. 
